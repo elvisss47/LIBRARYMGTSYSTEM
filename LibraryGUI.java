@@ -1,26 +1,16 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 /**
  * The Swing window. It talks to a single Library object.
- * Styled with a header banner, coloured cards and coloured buttons.
+ * Simple, plain styling: one accent colour, white and light grey.
  */
 public class LibraryGUI extends JFrame {
-    // ---------- Colour palette ----------
-    private static final Color TEAL   = new Color(0x00B894);
-    private static final Color BLUE   = new Color(0x0984E3);
-    private static final Color ORANGE = new Color(0xFF7F3F);
-    private static final Color PURPLE = new Color(0x6C5CE7);
-    private static final Color PINK   = new Color(0xE84393);
-    private static final Color YELLOW = new Color(0xFDCB6E);
-    private static final Color GREY   = new Color(0x636E72);
-    private static final Color GREEN  = new Color(0x00875A);
-    private static final Color RED    = new Color(0xD63031);
-    private static final Color PAGE   = new Color(0xF3EFFF);   // soft lavender
-    private static final Color TEXT   = new Color(0x2D3436);
-    private static final Color PAPER   = new Color(0xFFFCF2);  // warm cream for results
+    // ---------- Colours (only four) ----------
+    private static final Color ACCENT = new Color(0x455A64);  // muted blue-grey: header, buttons
+    private static final Color PAGE   = new Color(0xF5F5F5);  // light grey background
+    private static final Color GREEN  = new Color(0x2E7D32);  // success message
+    private static final Color RED    = new Color(0xC62828);  // error message
 
     private static final Font LABEL_FONT = new Font("SansSerif", Font.PLAIN, 13);
     private static final Font BOLD_FONT  = new Font("SansSerif", Font.BOLD, 13);
@@ -56,21 +46,9 @@ public class LibraryGUI extends JFrame {
     // ---------- Building the window ----------
 
     private JPanel buildHeader() {
-        // A header that paints a purple -> blue -> teal gradient
-        JPanel header = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
-                LinearGradientPaint paint = new LinearGradientPaint(
-                        0, 0, getWidth(), 0,
-                        new float[]{0f, 0.5f, 1f},
-                        new Color[]{PURPLE, BLUE, TEAL});
-                g2.setPaint(paint);
-                g2.fillRect(0, 0, getWidth(), getHeight());
-                g2.dispose();
-            }
-        };
+        // A plain coloured bar with a title and a subtitle
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(ACCENT);
         header.setBorder(BorderFactory.createEmptyBorder(16, 22, 14, 22));
 
         JLabel title = new JLabel("Library Management System");
@@ -78,26 +56,12 @@ public class LibraryGUI extends JFrame {
         title.setForeground(Color.WHITE);
 
         JLabel subtitle = new JLabel("Manage books, members, borrowing and returns");
-        subtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        subtitle.setForeground(new Color(0xF1EEFF));
+        subtitle.setFont(LABEL_FONT);
+        subtitle.setForeground(Color.WHITE);
 
         header.add(title, BorderLayout.NORTH);
         header.add(subtitle, BorderLayout.SOUTH);
-
-        // A thin rainbow strip under the header
-        JPanel strip = new JPanel(new GridLayout(1, 5));
-        strip.setPreferredSize(new Dimension(10, 6));
-        Color[] rainbow = {PINK, ORANGE, YELLOW, TEAL, PURPLE};
-        for (Color c : rainbow) {
-            JPanel seg = new JPanel();
-            seg.setBackground(c);
-            strip.add(seg);
-        }
-
-        JPanel wrapper = new JPanel(new BorderLayout());
-        wrapper.add(header, BorderLayout.CENTER);
-        wrapper.add(strip, BorderLayout.SOUTH);
-        return wrapper;
+        return header;
     }
 
     private JPanel buildCentre() {
@@ -116,30 +80,30 @@ public class LibraryGUI extends JFrame {
         controls.setBackground(PAGE);
 
         // Card 1: add a book
-        JPanel bookCard = makeCard("Add a Book", TEAL);
+        JPanel bookCard = makeCard("Add a Book");
         addRow(bookCard, 1, "Title:", titleField);
         addRow(bookCard, 2, "Author:", authorField);
-        JButton addBtn = makeButton("Add Book", TEAL);
+        JButton addBtn = makeButton("Add Book");
         addButtons(bookCard, 3, addBtn);
 
         // Card 2: register a member
-        JPanel memberCard = makeCard("Register a Member", BLUE);
+        JPanel memberCard = makeCard("Register a Member");
         addRow(memberCard, 1, "Name:", nameField);
-        JButton regBtn = makeButton("Register Member", BLUE);
+        JButton regBtn = makeButton("Register Member");
         addButtons(memberCard, 2, regBtn);
 
         // Card 3: borrow / return
-        JPanel borrowCard = makeCard("Borrow / Return", ORANGE);
+        JPanel borrowCard = makeCard("Borrow / Return");
         addRow(borrowCard, 1, "Book ID:", bookIdField);
         addRow(borrowCard, 2, "Member ID:", memberIdField);
-        JButton borrowBtn = makeButton("Borrow", ORANGE);
-        JButton returnBtn = makeButton("Return", PINK);
+        JButton borrowBtn = makeButton("Borrow");
+        JButton returnBtn = makeButton("Return");
         addButtons(borrowCard, 3, borrowBtn, returnBtn);
 
         // Card 4: search
-        JPanel searchCard = makeCard("Search Books", PURPLE);
+        JPanel searchCard = makeCard("Search Books");
         addRow(searchCard, 1, "Keyword:", searchField);
-        JButton searchBtn = makeButton("Search", PURPLE);
+        JButton searchBtn = makeButton("Search");
         addButtons(searchCard, 2, searchBtn);
 
         addCard(controls, bookCard);
@@ -175,26 +139,26 @@ public class LibraryGUI extends JFrame {
 
         JLabel heading = new JLabel("Results");
         heading.setFont(new Font("SansSerif", Font.BOLD, 16));
-        heading.setForeground(PURPLE);
+        heading.setForeground(ACCENT);
 
         output.setEditable(false);
         output.setLineWrap(true);
         output.setWrapStyleWord(true);
         output.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
-        output.setBackground(PAPER);
+        output.setBackground(Color.WHITE);
         output.setMargin(new Insets(12, 12, 12, 12));
 
         JScrollPane scroll = new JScrollPane(output);
-        scroll.setBorder(BorderFactory.createLineBorder(PURPLE, 2));
+        scroll.setBorder(BorderFactory.createLineBorder(ACCENT));
         scroll.setPreferredSize(new Dimension(560, 380));
 
         // Bottom bar with list buttons
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         bar.setBackground(PAGE);
         sortBox.setFont(LABEL_FONT);
-        JButton showBooks = makeButton("Show Books", BLUE);
-        JButton showMembers = makeButton("Show Members", PURPLE);
-        JButton clearBtn = makeButton("Clear", GREY);
+        JButton showBooks = makeButton("Show Books");
+        JButton showMembers = makeButton("Show Members");
+        JButton clearBtn = makeButton("Clear");
         bar.add(sortBox);
         bar.add(showBooks);
         bar.add(showMembers);
@@ -215,51 +179,30 @@ public class LibraryGUI extends JFrame {
     private static JTextField makeField(int columns) {
         JTextField f = new JTextField(columns);
         f.setFont(LABEL_FONT);
-        f.setForeground(TEXT);
-        f.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(0xCBD3E0)),
-                BorderFactory.createEmptyBorder(5, 8, 5, 8)));
         return f;
     }
 
-    private static JButton makeButton(String text, Color base) {
+    private static JButton makeButton(String text) {
         JButton b = new JButton(text);
-        b.setBackground(base);
+        b.setBackground(ACCENT);
         b.setForeground(Color.WHITE);
         b.setFont(BOLD_FONT);
         b.setFocusPainted(false);
-        b.setBorderPainted(false);
         b.setOpaque(true);
-        b.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
-        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        // Hover effect: darken the button while the mouse is over it
-        b.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) { b.setBackground(base.darker()); }
-            @Override
-            public void mouseExited(MouseEvent e) { b.setBackground(base); }
-        });
+        b.setBorderPainted(false);
         return b;
     }
 
-    /** Mixes a colour with white to make a light pastel shade. */
-    private static Color tint(Color c) {
-        int r = (int) (c.getRed() * 0.12 + 255 * 0.88);
-        int g = (int) (c.getGreen() * 0.12 + 255 * 0.88);
-        int b = (int) (c.getBlue() * 0.12 + 255 * 0.88);
-        return new Color(r, g, b);
-    }
-
-    private static JPanel makeCard(String title, Color accent) {
+    private static JPanel makeCard(String title) {
         JPanel card = new JPanel(new GridBagLayout());
-        card.setBackground(tint(accent));     // soft pastel version of the accent colour
+        card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 6, 0, 0, accent),
+                BorderFactory.createLineBorder(Color.LIGHT_GRAY),
                 BorderFactory.createEmptyBorder(10, 14, 12, 14)));
 
         JLabel heading = new JLabel(title);
         heading.setFont(new Font("SansSerif", Font.BOLD, 15));
-        heading.setForeground(accent);
+        heading.setForeground(ACCENT);
 
         GridBagConstraints g = new GridBagConstraints();
         g.gridx = 0;
@@ -274,7 +217,7 @@ public class LibraryGUI extends JFrame {
     private static void addRow(JPanel card, int rowIndex, String labelText, JComponent field) {
         JLabel label = new JLabel(labelText);
         label.setFont(LABEL_FONT);
-        label.setForeground(TEXT);
+        label.setForeground(Color.DARK_GRAY);
 
         GridBagConstraints g = new GridBagConstraints();
         g.gridy = rowIndex;
@@ -315,9 +258,9 @@ public class LibraryGUI extends JFrame {
 
     // ---------- Showing messages ----------
 
-    /** Plain text (lists, welcome message) in the normal dark colour. */
+    /** Plain text (lists, welcome message). */
     private void showText(String text) {
-        output.setForeground(TEXT);
+        output.setForeground(Color.DARK_GRAY);
         output.setText(text);
         output.setCaretPosition(0);
     }
