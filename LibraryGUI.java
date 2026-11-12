@@ -7,7 +7,7 @@ import java.awt.*;
  */
 public class LibraryGUI extends JFrame {
     // ---------- Colours (only four) ----------
-    private static final Color ACCENT = new Color(0x455A64);  // muted blue-grey: header, buttons
+    private static final Color ACCENT = new Color(0x795548);  // brown: header, buttons
     private static final Color PAGE   = new Color(0xF5F5F5);  // light grey background
     private static final Color GREEN  = new Color(0x2E7D32);  // success message
     private static final Color RED    = new Color(0xC62828);  // error message
